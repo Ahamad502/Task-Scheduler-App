@@ -1,0 +1,44 @@
+/* Priority-based border colors */
+.priority-high {
+    border-left: 4px solid #ef4444;
+}
+
+.dark .priority-high {
+    border-left: 4px solid #f87171;
+}
+
+.priority-medium {
+    border-left: 4px solid #f59e0b;
+}
+
+.dark .priority-medium {
+    border-left: 4px solid #fbbf24;
+}
+
+.priority-low {
+    border-left: 4px solid #10b981;
+}
+
+.dark .priority-low {
+    border-left: 4px solid #34d399;
+}
+
+/* Task completion styling */
+.task-completed {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+/* Overdue task animation */
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
