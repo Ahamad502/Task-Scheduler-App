@@ -3,105 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator</title>
+    <title>Task Scheduler App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen gradient-bg flex flex-col">
-    <!-- Frontend UI -->
-    <div class="container mx-auto px-4 py-12 flex-grow flex flex-col">
-        <div class="max-w-3xl mx-auto w-full">
-            <div class="text-center mb-12">
-                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">QR Code Generator</h1>
-                <p class="text-xl text-white opacity-90">Create custom QR codes for URLs, text, or contact information in seconds</p>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-indigo-700 dark:text-indigo-300">
+                    <i class="fas fa-tasks mr-2"></i> Task Scheduler
+                </h1>
+                <div class="flex items-center space-x-4">
+                    <div id="currentDateTime" class="text-gray-600 dark:text-gray-300"></div>
+                    <button id="themeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
             </div>
+            <p class="text-gray-600 dark:text-gray-300 mt-2">Organize your tasks efficiently with reminders and priorities</p>
+        </header>
 
-            <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <div class="mb-6">
-                        <label for="qr-content" class="block text-gray-700 font-medium mb-2">Enter URL or Text</label>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <input type="text" id="qr-content" placeholder="https://example.com or any text" 
-                                   class="flex-grow px-4 py-3 border border-gray-300 rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition">
-                            <button id="generate-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg sm:rounded-l-none sm:rounded-r-lg font-medium transition-colors whitespace-nowrap min-w-[120px]">
-                                <i class="fas fa-qrcode mr-2"></i>Generate
-                            </button>
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Task Form -->
+            <div class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 h-fit">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">
+                    <i class="fas fa-plus-circle mr-2 text-indigo-600 dark:text-indigo-300"></i>Add New Task
+                </h2>
+                <form id="taskForm" class="space-y-4">
+                    <div>
+                        <label for="taskTitle" class="block text-sm font-medium text-gray-700 mb-1">Task Title</label>
+                        <input type="text" id="taskTitle" required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label for="taskDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="taskDescription" rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="taskDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                            <input type="datetime-local" id="taskDueDate" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        
+                        <div>
+                            <label for="taskPriority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                            <select id="taskPriority" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-700 mb-4">Customization</h3>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="qr-color" class="block text-gray-600 mb-1">Color</label>
-                                    <input type="color" id="qr-color" value="#000000" class="w-full h-10 cursor-pointer">
-                                </div>
-                                
-                                <div>
-                                    <label for="qr-bgcolor" class="block text-gray-600 mb-1">Background Color</label>
-                                    <input type="color" id="qr-bgcolor" value="#ffffff" class="w-full h-10 cursor-pointer">
-                                </div>
-                                
-                                <div>
-                                    <label for="qr-size" class="block text-gray-600 mb-1">Size (px)</label>
-                                    <input type="range" id="qr-size" min="100" max="500" value="200" class="w-full">
-                                    <div class="text-right text-sm text-gray-500"><span id="size-value">200</span>px</div>
-                                </div>
-                                
-                                <div>
-                                    <label for="qr-margin" class="block text-gray-600 mb-1">Margin</label>
-                                    <input type="range" id="qr-margin" min="0" max="20" value="4" class="w-full">
-                                    <div class="text-right text-sm text-gray-500"><span id="margin-value">4</span> modules</div>
-                                </div>
-                                
-                                <div>
-                                    <label for="qr-error" class="block text-gray-600 mb-1">Error Correction</label>
-                                    <select id="qr-error" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none">
-                                        <option value="L">Low (7%)</option>
-                                        <option value="M" selected>Medium (15%)</option>
-                                        <option value="Q">Quartile (25%)</option>
-                                        <option value="H">High (30%)</option>
-                                    </select>
-                                </div>
-                            </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="taskReminder" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                        <label for="taskReminder" class="ml-2 block text-sm text-gray-700">Set Reminder</label>
+                    </div>
+                    
+                    <div id="reminderOptions" class="hidden">
+                        <label for="reminderTime" class="block text-sm font-medium text-gray-700 mb-1">Reminder Before</label>
+                        <select id="reminderTime" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="5">5 minutes</option>
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                            <option value="1440">1 day</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-2">
+                        <button type="reset" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            Clear
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            Add Task
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Task List -->
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">
+                            <i class="fas fa-list-check mr-2 text-indigo-600 dark:text-indigo-300"></i>Your Tasks
+                        </h2>
+                        <div class="flex space-x-2">
+                            <select id="sortBy" class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                <option value="dueDate">Sort by Due Date</option>
+                                <option value="priority">Sort by Priority</option>
+                                <option value="createdAt">Sort by Creation Date</option>
+                            </select>
+                            <select id="filterBy" class="px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                                <option value="all">All Tasks</option>
+                                <option value="today">Today</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="completed">Completed</option>
+                            </select>
                         </div>
-
-                        <div class="flex flex-col">
-                            <h3 class="text-lg font-medium text-gray-700 mb-4">QR Code Preview</h3>
-                            <div class="flex-grow flex flex-col items-center justify-center">
-                                <div id="qr-placeholder" class="text-center p-8 text-gray-400">
-                                    <i class="fas fa-qrcode text-6xl mb-4"></i>
-                                    <p>Your QR code will appear here</p>
-                                </div>
-                                <div id="qr-result" class="hidden qr-container bg-white p-4 rounded-lg shadow-md mb-4">
-                                    <canvas id="qr-canvas"></canvas>
-                                </div>
-                            </div>
-                            
-                            <div id="download-btns" class="hidden mt-6 grid grid-cols-2 gap-4">
-                                <button id="download-png" class="download-btn bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center">
-                                    <i class="fas fa-download mr-2"></i> PNG
-                                </button>
-                                <button id="download-svg" class="download-btn bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center">
-                                    <i class="fas fa-download mr-2"></i> SVG
-                                </button>
-                            </div>
+                    </div>
+                    
+                    <div id="taskList" class="space-y-3">
+                        <!-- Tasks will be dynamically added here -->
+                        <div class="text-center py-8 text-gray-500" id="emptyState">
+                            <i class="fas fa-inbox text-4xl mb-2"></i>
+                            <p>No tasks found. Add a new task to get started!</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-300" id="totalTasks">0</div>
+                        <div class="text-gray-600 dark:text-gray-300">Total Tasks</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-green-600 dark:text-green-300" id="completedTasks">0</div>
+                        <div class="text-gray-600 dark:text-gray-300">Completed</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 text-center">
+                        <div class="text-2xl font-bold text-red-600 dark:text-red-300" id="overdueTasks">0</div>
+                        <div class="text-gray-600 dark:text-gray-300">Overdue</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="bg-white bg-opacity-10 py-6">
-        <div class="container mx-auto px-4 text-center text-white">
-            <p>QR Code Generator &copy; 2023 | Made with <i class="fas fa-heart text-red-400"></i></p>
+    <!-- Edit Task Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl p-6 w-full max-w-md border border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Edit Task</h3>
+                <button id="closeModal" class="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editTaskForm" class="space-y-4">
+                <input type="hidden" id="editTaskId">
+                <div>
+                    <label for="editTaskTitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Task Title</label>
+                    <input type="text" id="editTaskTitle" required 
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div>
+                    <label for="editTaskDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea id="editTaskDescription" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="editTaskDueDate" class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+                        <input type="datetime-local" id="editTaskDueDate" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label for="editTaskPriority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                        <select id="editTaskPriority" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="editTaskReminder" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                    <label for="editTaskReminder" class="ml-2 block text-sm text-gray-700">Set Reminder</label>
+                </div>
+                
+                <div id="editReminderOptions" class="hidden">
+                    <label for="editReminderTime" class="block text-sm font-medium text-gray-700 mb-1">Reminder Before</label>
+                    <select id="editReminderTime" 
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="5">5 minutes</option>
+                        <option value="15">15 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="1440">1 day</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancelEdit" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
-    </footer>
+    </div>
 
+    <!-- Notification -->
+    <div id="notification" class="fixed bottom-4 right-4 bg-green-500 dark:bg-green-700 text-white px-4 py-2 rounded-md shadow-lg hidden">
+        <span id="notificationMessage"></span>
+    </div>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
